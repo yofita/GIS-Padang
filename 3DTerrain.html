@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terrain 3D</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+<style>
+    /* this is navbar configuration */
+    body {
+      margin: 0;
+      font-family: Poppins;
+    }
+    .topnav {
+      overflow: hidden;
+      background-color: rgb(255, 255, 255);
+    }
+    .topnav a {
+      float: left;
+      color: #272e35;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .topnav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+    .topnav a.active {
+      background-color: #27C499;
+      color: white;
+    }
+</style>
+<style>
+    /* this is body style of navbar config */
+    body { margin: 0; padding: 0; }
+    /* this is body of map config */
+    #map { position: absolute; top: 45px; bottom: 0; width: 100%; }
+</style>
+</head>
+<!-- this is navbar body content-->
+<body>
+    <div class="topnav">
+      <a href="index.html">Home</a> 
+      <a href="2DBuilding.html">Peta Orto</a> 
+      <a href='3DBuilding.html'>Peta 3D</a>
+      <a class="active" href='3DTerrain.html'>Peta 3D Terrain</a>
+    </div>
+</body>
+<!-- this is body of maps-->
+<body>
+    <!-- Load the `mapbox-gl-geocoder` plugin. -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" type="text/css">
+     
+    <!-- Promise polyfill script is required -->
+    <!-- to use Mapbox GL Geocoder in IE 11. -->
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+<div id="map"></div>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiYWtyYW1zcCIsImEiOiJjanRpaWcwdG8ycGtsNDNwNzljZzNkcnRhIn0.gdOvmWUSQ-oBCx4wgFsTmw';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        zoom: 13.1,
+        center: [100.35267354127444, -0.9372852674384688],
+        pitch: 85,
+        bearing: 80,
+        style: 'mapbox://styles/mapbox-map-design/ckhqrf2tz0dt119ny6azh975y'
+    });
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl})
+            ); // Add the Geocoder control to the map.
+    map.addControl(new mapboxgl.NavigationControl()); // Adds zoom and rotation controls to the map.
+    map.on('load', function () {
+        map.addSource('mapbox-dem', {
+            'type': 'raster-dem',
+            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+            'tileSize': 512,
+            'maxzoom': 14
+        });
+        // add the DEM source as a terrain layer with exaggerated height
+        map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+
+        // add a sky layer that will show when the map is highly pitched
+        map.addLayer({
+            'id': 'sky',
+            'type': 'sky',
+            'paint': {
+                'sky-type': 'atmosphere',
+                'sky-atmosphere-sun': [0.0, 0.0],
+                'sky-atmosphere-sun-intensity': 15
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
